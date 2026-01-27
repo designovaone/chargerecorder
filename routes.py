@@ -203,6 +203,41 @@ async def export_csv(
     )
 
 
+@router.delete("/api/sessions/{session_id}")
+async def delete_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+    session_cookie: Optional[str] = Cookie(None)
+):
+    require_auth(session_cookie)
+
+    session = db.query(ChargingSession).filter(
+        ChargingSession.id == session_id
+    ).first()
+
+    if not session:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Session not found"
+        )
+
+    db.delete(session)
+    db.commit()
+    return {"message": "Session deleted"}
+
+
+@router.delete("/api/sessions")
+async def delete_all_sessions(
+    db: Session = Depends(get_db),
+    session_cookie: Optional[str] = Cookie(None)
+):
+    require_auth(session_cookie)
+
+    db.query(ChargingSession).delete()
+    db.commit()
+    return {"message": "All sessions deleted"}
+
+
 @router.get("/health")
 async def health_check():
     return {"status": "ok"}

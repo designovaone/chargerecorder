@@ -84,13 +84,24 @@
                         id="end-btn"
                         class="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition-colors"
                     >
-                        End
+                        Stop
                     </button>
                 </div>
             </div>
 
             <!-- Feedback Message -->
             <p id="feedback" class="text-center text-lg hidden"></p>
+
+            <!-- Clear All Button -->
+            <button
+                id="clear-all-btn"
+                class="flex items-center justify-center gap-2 py-2 px-4 bg-red-900/50 hover:bg-red-900 rounded-lg text-red-300 text-sm font-medium transition-colors"
+            >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+                Clear All Sessions
+            </button>
 
             <!-- History -->
             <div class="flex-1 overflow-hidden flex flex-col">
@@ -178,6 +189,7 @@
             recognition = new SpeechRecognition();
             recognition.continuous = false;
             recognition.interimResults = false;
+            recognition.lang = 'en-US';  // Required for Safari
 
             recognition.onstart = () => {
                 isListening = true;
@@ -195,7 +207,21 @@
 
             recognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
+                console.log('Heard:', transcript);
                 parseAndSubmit(transcript);
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                let errorMsg = 'Speech recognition failed';
+                if (event.error === 'no-speech') {
+                    errorMsg = 'No speech detected';
+                } else if (event.error === 'not-allowed') {
+                    errorMsg = 'Microphone permission denied';
+                } else if (event.error === 'network') {
+                    errorMsg = 'Network error - check connection';
+                }
+                showFeedback(errorMsg, 'error');
             };
 
             micButton.addEventListener('click', () => {
@@ -317,7 +343,14 @@
                             <div class="bg-gray-800 rounded-lg p-3">
                                 <div class="flex justify-between items-center">
                                     <span>${s.start_percentage}% → ${s.end_percentage}%</span>
-                                    <span class="text-green-400">+${gained}%</span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-green-400">+${gained}%</span>
+                                        <button onclick="deleteSession(${s.id})" class="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/30 rounded">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="text-sm text-gray-400 mt-1">
                                     ${startStr} → ${endStr}
@@ -327,9 +360,18 @@
                     } else {
                         return `
                             <div class="bg-gray-800 rounded-lg p-3 border-l-4 border-green-500">
-                                <div class="text-lg">${s.start_percentage}%</div>
-                                <div class="text-sm text-gray-400">Started: ${startStr}</div>
-                                <div class="text-sm text-green-400">In progress...</div>
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <div class="text-lg">${s.start_percentage}%</div>
+                                        <div class="text-sm text-gray-400">Started: ${startStr}</div>
+                                        <div class="text-sm text-green-400">In progress...</div>
+                                    </div>
+                                    <button onclick="deleteSession(${s.id})" class="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/30 rounded">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         `;
                     }
@@ -346,6 +388,56 @@
             feedback.classList.remove('hidden');
             setTimeout(() => feedback.classList.add('hidden'), 3000);
         }
+
+        // Delete single session
+        async function deleteSession(sessionId) {
+            if (!confirm('Delete this session?')) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/sessions/${sessionId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!res.ok) {
+                    const data = await res.json();
+                    showFeedback(data.detail || 'Delete failed', 'error');
+                    return;
+                }
+
+                showFeedback('Session deleted', 'success');
+                refreshStatus();
+                refreshHistory();
+            } catch (err) {
+                showFeedback('Connection failed', 'error');
+            }
+        }
+
+        // Clear all sessions
+        document.getElementById('clear-all-btn').addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to delete ALL sessions? This cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/sessions`, {
+                    method: 'DELETE'
+                });
+
+                if (!res.ok) {
+                    const data = await res.json();
+                    showFeedback(data.detail || 'Delete failed', 'error');
+                    return;
+                }
+
+                showFeedback('All sessions deleted', 'success');
+                refreshStatus();
+                refreshHistory();
+            } catch (err) {
+                showFeedback('Connection failed', 'error');
+            }
+        });
 
         // Export CSV
         document.getElementById('export-btn').addEventListener('click', async () => {
