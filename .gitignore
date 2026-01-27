@@ -1,7 +1,27 @@
+# Node.js
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# Production
+build/
+
+# Environment
+.env
+.env*.local
+
+# Vercel
+.vercel
+
+# Python
 venv/
 __pycache__/
 *.pyc
-.env
+
+# Database
 data/*.db
+
+# System
 .DS_Store
-.claude/
