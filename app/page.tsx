@@ -55,6 +55,17 @@ export default function Home() {
       </div>
 
       <ExportButton />
+
+      <footer className="p-4 text-center">
+        <a
+          href="https://richardwimmer.de"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-primary hover:opacity-80 transition-opacity"
+        >
+          Made with ❤️ by Richard Wimmer
+        </a>
+      </footer>
     </main>
   );
 }
