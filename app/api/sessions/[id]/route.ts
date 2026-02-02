@@ -21,7 +21,7 @@ export async function DELETE(
     DELETE FROM charging_sessions
     WHERE id = ${sessionId}
     RETURNING id
-  `;
+  ` as unknown as { id: number }[];
 
   if (result.length === 0) {
     const error: ErrorResponse = {

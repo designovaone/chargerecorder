@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { verifyAuth, unauthorizedResponse } from '@/lib/auth';
+import type { ChargingSession } from '@/lib/types';
 
 /**
  * GET /api/sessions/csv
@@ -14,7 +15,7 @@ export async function GET() {
     SELECT start_percentage, start_time, end_percentage, end_time
     FROM charging_sessions
     ORDER BY start_time ASC
-  `;
+  ` as unknown as ChargingSession[];
 
   const header = 'start_percentage,start_datetime,end_percentage,end_datetime\n';
   const rows = sessions.map((s) =>

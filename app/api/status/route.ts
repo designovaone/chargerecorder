@@ -17,7 +17,7 @@ export async function GET() {
     WHERE end_percentage IS NULL
     ORDER BY start_time DESC
     LIMIT 1
-  `;
+  ` as unknown as { start_percentage: number; start_time: string }[];
 
   if (result.length > 0) {
     const status: StatusResponse = {

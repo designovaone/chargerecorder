@@ -1,12 +1,12 @@
-import { neon, NeonQueryFunction } from '@neondatabase/serverless';
+import { neon } from '@neondatabase/serverless';
 
-let _sql: NeonQueryFunction<false, false> | null = null;
+let _sql: ReturnType<typeof neon> | null = null;
 
 /**
  * Gets the database connection, initializing it lazily.
  * This prevents build-time errors when NEON_DATABASE_URL is not set.
  */
-export function getSql(): NeonQueryFunction<false, false> {
+function getSql() {
   if (!_sql) {
     if (!process.env.NEON_DATABASE_URL) {
       throw new Error('NEON_DATABASE_URL is not set');
@@ -16,9 +16,7 @@ export function getSql(): NeonQueryFunction<false, false> {
   return _sql;
 }
 
-// For convenience, also export a default sql object that uses the getter
-export const sql = new Proxy({} as NeonQueryFunction<false, false>, {
-  get(_target, prop) {
-    return getSql()[prop as keyof NeonQueryFunction<false, false>];
-  },
-});
+// Export sql as a tagged template function that lazily initializes
+export const sql = (strings: TemplateStringsArray, ...values: unknown[]) => {
+  return getSql()(strings, ...values);
+};

@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       INSERT INTO charging_sessions (start_percentage, start_time)
       VALUES (${percentage}, NOW())
       RETURNING id, start_percentage, start_time
-    `;
+    ` as unknown as ChargingSession[];
 
     const response: SessionResponse = {
       message: `Recorded ${percentage}% as start charge`,
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       WHERE end_percentage IS NULL
       ORDER BY start_time DESC
       LIMIT 1
-    `;
+    ` as unknown as { id: number }[];
 
     if (openSession.length === 0) {
       const error: ErrorResponse = {
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
       SET end_percentage = ${percentage}, end_time = NOW()
       WHERE id = ${openSession[0].id}
       RETURNING id, start_percentage, start_time, end_percentage, end_time
-    `;
+    ` as unknown as ChargingSession[];
 
     const response: SessionResponse = {
       message: `Recorded ${percentage}% as end charge`,
