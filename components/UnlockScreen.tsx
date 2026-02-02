@@ -38,28 +38,28 @@ export default function UnlockScreen({ onUnlock }: UnlockScreenProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-center mb-8">Charge Recorder</h1>
+        <h1 className="text-2xl font-bold text-center mb-8 text-primary">Charge Recorder</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="password"
             value={phrase}
             onChange={(e) => setPhrase(e.target.value)}
             placeholder="Enter passphrase"
-            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 bg-white border border-border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
             autoFocus
           />
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 rounded-lg font-semibold transition-colors"
+            className="w-full py-3 bg-primary hover:opacity-90 disabled:bg-gray-300 disabled:text-gray-500 rounded-lg font-semibold text-white transition-opacity"
           >
             {isLoading ? 'Verifying...' : 'Unlock'}
           </button>
         </form>
         {error && (
-          <p className="mt-4 text-red-400 text-center">{error}</p>
+          <p className="mt-4 text-red-500 text-center">{error}</p>
         )}
       </div>
     </div>

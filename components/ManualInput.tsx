@@ -56,24 +56,24 @@ export default function ManualInput({ onSubmit }: ManualInputProps) {
           placeholder="Enter percentage (0-100)"
           min="0"
           max="100"
-          className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 px-4 py-3 bg-white border border-border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
         />
         <button
           onClick={() => handleSubmit('start')}
-          className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold transition-colors"
+          className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold text-white transition-colors"
         >
           Start
         </button>
         <button
           onClick={() => handleSubmit('end')}
-          className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition-colors"
+          className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-semibold text-white transition-colors"
         >
           Stop
         </button>
       </div>
 
       {feedback && (
-        <p className={`text-center text-lg ${feedbackType === 'error' ? 'text-red-400' : 'text-green-400'}`}>
+        <p className={`text-center text-lg ${feedbackType === 'error' ? 'text-red-500' : 'text-green-600'}`}>
           {feedback}
         </p>
       )}

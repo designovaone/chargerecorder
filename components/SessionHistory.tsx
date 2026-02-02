@@ -86,7 +86,7 @@ export default function SessionHistory({ refreshKey, onDelete }: SessionHistoryP
         {sessions.length > 0 && (
           <button
             onClick={clearAllSessions}
-            className="flex items-center gap-2 py-2 px-4 bg-red-900/50 hover:bg-red-900 rounded-lg text-red-300 text-sm font-medium transition-colors"
+            className="flex items-center gap-2 py-2 px-4 bg-red-100 hover:bg-red-200 rounded-lg text-red-600 text-sm font-medium transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -111,14 +111,14 @@ export default function SessionHistory({ refreshKey, onDelete }: SessionHistoryP
               const gained = session.end_percentage - session.start_percentage;
 
               return (
-                <div key={session.id} className="bg-gray-800 rounded-lg p-3">
+                <div key={session.id} className="bg-white border border-border rounded-lg p-3">
                   <div className="flex justify-between items-center">
-                    <span>{session.start_percentage}% → {session.end_percentage}%</span>
+                    <span className="text-gray-800">{session.start_percentage}% → {session.end_percentage}%</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-green-400">+{gained}%</span>
+                      <span className="text-green-600">+{gained}%</span>
                       <button
                         onClick={() => deleteSession(session.id)}
-                        className="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/30 rounded"
+                        className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -126,7 +126,7 @@ export default function SessionHistory({ refreshKey, onDelete }: SessionHistoryP
                       </button>
                     </div>
                   </div>
-                  <div className="text-sm text-gray-400 mt-1">
+                  <div className="text-sm text-gray-500 mt-1">
                     {startStr} → {endStr}
                   </div>
                 </div>
@@ -134,16 +134,16 @@ export default function SessionHistory({ refreshKey, onDelete }: SessionHistoryP
             }
 
             return (
-              <div key={session.id} className="bg-gray-800 rounded-lg p-3 border-l-4 border-green-500">
+              <div key={session.id} className="bg-white border border-border rounded-lg p-3 border-l-4 border-primary">
                 <div className="flex justify-between items-start">
                   <div>
-                    <div className="text-lg">{session.start_percentage}%</div>
-                    <div className="text-sm text-gray-400">Started: {startStr}</div>
-                    <div className="text-sm text-green-400">In progress...</div>
+                    <div className="text-lg text-gray-800">{session.start_percentage}%</div>
+                    <div className="text-sm text-gray-500">Started: {startStr}</div>
+                    <div className="text-sm text-primary">In progress...</div>
                   </div>
                   <button
                     onClick={() => deleteSession(session.id)}
-                    className="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/30 rounded"
+                    className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>

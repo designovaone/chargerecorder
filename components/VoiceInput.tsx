@@ -149,14 +149,14 @@ export default function VoiceInput({ onSubmit }: VoiceInputProps) {
       <div className="space-y-4">
         <button
           disabled
-          className="w-full py-12 bg-gray-800 rounded-lg flex items-center justify-center opacity-50"
+          className="w-full py-12 bg-white border border-border rounded-lg flex items-center justify-center opacity-50"
           style={{ minHeight: '120px' }}
         >
-          <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-16 h-16 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
           </svg>
         </button>
-        <p className="text-center text-gray-400 text-sm">Voice input not supported in this browser</p>
+        <p className="text-center text-gray-500 text-sm">Voice input not supported in this browser</p>
       </div>
     );
   }
@@ -165,8 +165,8 @@ export default function VoiceInput({ onSubmit }: VoiceInputProps) {
     <div className="space-y-4">
       <button
         onClick={toggleListening}
-        className={`w-full py-12 rounded-lg flex items-center justify-center transition-colors ${
-          isListening ? 'bg-blue-600 listening' : 'bg-gray-800 hover:bg-gray-700'
+        className={`w-full py-12 rounded-lg flex items-center justify-center transition-opacity ${
+          isListening ? 'bg-primary listening text-white' : 'bg-white border border-border hover:bg-gray-50 text-primary'
         }`}
         style={{ minHeight: '120px' }}
       >
@@ -175,7 +175,7 @@ export default function VoiceInput({ onSubmit }: VoiceInputProps) {
         </svg>
       </button>
       {isListening && (
-        <p className="text-center text-gray-400">Listening...</p>
+        <p className="text-center text-gray-600">Listening...</p>
       )}
     </div>
   );

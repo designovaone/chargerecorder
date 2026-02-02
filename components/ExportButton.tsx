@@ -24,11 +24,11 @@ export default function ExportButton() {
   }
 
   return (
-    <div className="p-4 border-t border-gray-700">
+    <div className="p-4 border-t border-border">
       <button
         onClick={handleExport}
         disabled={isExporting}
-        className="w-full py-3 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 rounded-lg font-semibold transition-colors"
+        className="w-full py-3 bg-primary hover:opacity-90 disabled:bg-gray-300 disabled:text-gray-500 rounded-lg font-semibold text-white transition-opacity"
       >
         {isExporting ? 'Exporting...' : 'Export CSV'}
       </button>

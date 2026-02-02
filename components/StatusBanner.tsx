@@ -27,7 +27,7 @@ export default function StatusBanner({ refreshKey }: StatusBannerProps) {
 
   if (!status) {
     return (
-      <div className="p-4 bg-gray-800 border-b border-gray-700">
+      <div className="p-4 bg-white border-b border-border">
         <p className="text-center text-lg text-gray-400">Loading...</p>
       </div>
     );
@@ -37,8 +37,8 @@ export default function StatusBanner({ refreshKey }: StatusBannerProps) {
     const date = new Date(status.start_time);
     const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     return (
-      <div className="p-4 bg-gray-800 border-b border-gray-700">
-        <p className="text-center text-lg text-green-400">
+      <div className="p-4 bg-white border-b border-border">
+        <p className="text-center text-lg text-primary">
           Charging since {timeStr} ({status.start_percentage}%)
         </p>
       </div>
@@ -46,8 +46,8 @@ export default function StatusBanner({ refreshKey }: StatusBannerProps) {
   }
 
   return (
-    <div className="p-4 bg-gray-800 border-b border-gray-700">
-      <p className="text-center text-lg">No active charge</p>
+    <div className="p-4 bg-white border-b border-border">
+      <p className="text-center text-lg text-gray-600">No active charge</p>
     </div>
   );
 }

@@ -34,8 +34,8 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white">Loading...</div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-gray-600">Loading...</div>
       </div>
     );
   }
@@ -45,7 +45,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-900 text-white flex flex-col">
+    <main className="min-h-screen bg-background text-gray-900 flex flex-col">
       <StatusBanner refreshKey={refreshKey} />
 
       <div className="flex-1 flex flex-col p-4 space-y-4">
