@@ -22,6 +22,28 @@ __pycache__/
 
 # Database
 data/*.db
+data/
 
 # System
 .DS_Store
+
+# Development notes and session summaries
+*-session-*.md
+*-deployment-plan.md
+*-vercel-*.md
+*-implementation*.md
+BUILD_PROMPT.md
+
+# Old Python/FastAPI files (migrated to Next.js)
+main.py
+models.py
+routes.py
+requirements.txt
+schema.sql
+activate.sh
+setup-chargerecorder.sh
+static/
+agents/
+
+# Claude Code settings
+.claude/
