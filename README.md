@@ -2,7 +2,7 @@
 
 A minimalist web app for tracking electric car charge levels via voice or text input.
 
-![Charge Recorder App](https://maas-log-prod.cn-wlcb.ufileos.com/anthropic/f77305c6-c0d3-492c-8466-ebac82751615/chargerecorder.PNG?UCloudPublicKey=TOKEN_e15ba47a-d098-4fbd-9afc-a0dcf0e4e621&Expires=1770055858&Signature=d0s1Jdtf4cRcAmlTrGCB7PluaJM=)
+<img src="https://maas-log-prod.cn-wlcb.ufileos.com/anthropic/f77305c6-c0d3-492c-8466-ebac82751615/chargerecorder.PNG?UCloudPublicKey=TOKEN_e15ba47a-d098-4fbd-9afc-a0dcf0e4e621&Expires=1770055858&Signature=d0s1Jdtf4cRcAmlTrGCB7PluaJM=" alt="Charge Recorder App" width="50%">
 
 ## Features
 
@@ -46,7 +46,7 @@ Visit `http://localhost:3000`
 
 ## Deployment
 
-The app is deployed at [chargerecorder.vercel.app](https://chargerecorder.vercel.app)
+I deployed my app at [chargerecorder.vercel.app](https://chargerecorder.vercel.app) - just clone it if you want to have your own charge recorder.
 
 Environment variables required:
 - `NEON_DATABASE_URL` - PostgreSQL connection string
