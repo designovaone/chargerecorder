@@ -56,15 +56,23 @@ export async function POST(request: NextRequest) {
 
   if (type === 'end') {
     const openSession = await sql`
-      SELECT id FROM charging_sessions
+      SELECT id, start_percentage FROM charging_sessions
       WHERE end_percentage IS NULL
       ORDER BY start_time DESC
       LIMIT 1
-    ` as unknown as { id: number }[];
+    ` as unknown as { id: number; start_percentage: number }[];
 
     if (openSession.length === 0) {
       const error: ErrorResponse = {
         detail: 'No active charging session found',
+      };
+      return NextResponse.json(error, { status: 400 });
+    }
+
+    // Check that end percentage is >= start percentage
+    if (percentage < openSession[0].start_percentage) {
+      const error: ErrorResponse = {
+        detail: 'Please check value entered',
       };
       return NextResponse.json(error, { status: 400 });
     }
