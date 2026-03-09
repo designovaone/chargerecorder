@@ -63,42 +63,30 @@ export default function VoiceInput({ onSubmit }: VoiceInputProps) {
   const [isSupported, setIsSupported] = useState(true);
   const [message, setMessage] = useState<string>('');
   const [isError, setIsError] = useState(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const SpeechRecognitionRef = useRef<any>(null);
 
   useEffect(() => {
-    // Check for Web Speech API support
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
     if (!SpeechRecognition) {
       setIsSupported(false);
       return;
     }
-
-    recognitionRef.current = SpeechRecognition;
+    SpeechRecognitionRef.current = SpeechRecognition;
   }, []);
 
   function parseAndSubmit(text: string) {
-    // Extract number from text like "62 percent", "62%", "62"
     const match = text.match(/(\d+)/);
-    if (!match) {
-      return;
-    }
+    if (!match) return;
 
     const percentage = parseInt(match[1]);
-    if (percentage < 0 || percentage > 100) {
-      return;
-    }
+    if (percentage < 0 || percentage > 100) return;
 
-    // Determine if start or end based on context
     const isEnd = text.toLowerCase().includes('end') || text.toLowerCase().includes('stop');
-    const type = isEnd ? 'end' : 'start';
-
-    submitSession(percentage, type);
+    submitSession(percentage, isEnd ? 'end' : 'start');
   }
 
   async function submitSession(percentage: number, type: 'start' | 'end') {
     try {
-      console.log('Submitting:', { percentage, type });
       const res = await fetch('/api/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -106,21 +94,18 @@ export default function VoiceInput({ onSubmit }: VoiceInputProps) {
       });
 
       const data = await res.json();
-      console.log('Response:', res.status, data);
 
       if (res.ok) {
         setMessage(data.message || `Recorded ${percentage}%`);
         setIsError(false);
         onSubmit();
-        // Clear message after 3 seconds
         setTimeout(() => setMessage(''), 3000);
       } else {
         setMessage(data.detail || 'Failed to record');
         setIsError(true);
         setTimeout(() => setMessage(''), 3000);
       }
-    } catch (err) {
-      console.error('Submit failed:', err);
+    } catch {
       setMessage('Network error');
       setIsError(true);
       setTimeout(() => setMessage(''), 3000);
@@ -128,40 +113,26 @@ export default function VoiceInput({ onSubmit }: VoiceInputProps) {
   }
 
   function toggleListening() {
-    if (!recognitionRef.current) return;
+    if (!SpeechRecognitionRef.current) return;
 
     if (isListening) {
-      // Can't stop speech recognition on iOS - just let it finish naturally
       setIsListening(false);
       return;
     }
 
-    // Create a fresh recognition instance each time (required for iOS Safari)
-    const SpeechRecognition = recognitionRef.current as any;
-    const recognition = new SpeechRecognition();
-
+    const recognition = new SpeechRecognitionRef.current();
     recognition.continuous = false;
     recognition.interimResults = false;
     recognition.lang = 'en-US';
 
-    recognition.onstart = () => {
-      console.log('Speech recognition started');
-      setIsListening(true);
-    };
-
-    recognition.onend = () => {
-      console.log('Speech recognition ended');
-      setIsListening(false);
-    };
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = event.results[0][0].transcript;
-      console.log('Heard:', transcript);
-      parseAndSubmit(transcript);
+      parseAndSubmit(event.results[0][0].transcript);
     };
 
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-      console.error('Speech recognition error:', event.error, event.message);
       setIsListening(false);
       setMessage(`Error: ${event.error}`);
       setIsError(true);
@@ -170,8 +141,8 @@ export default function VoiceInput({ onSubmit }: VoiceInputProps) {
 
     try {
       recognition.start();
-    } catch (err) {
-      console.error('Failed to start recognition:', err);
+    } catch {
+      // Ignore - already started or other state issue
     }
   }
 
