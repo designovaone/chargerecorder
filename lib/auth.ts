@@ -40,7 +40,7 @@ export function unauthorizedResponse(): NextResponse {
 export function setSessionCookie(response: NextResponse): NextResponse {
   response.cookies.set(SESSION_COOKIE_NAME, UNLOCK_PHRASE, {
     httpOnly: true,
-    maxAge: 86400, // 24 hours
+    maxAge: 7776000, // 90 days
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
   });
