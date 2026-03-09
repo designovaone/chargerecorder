@@ -74,31 +74,7 @@ export default function VoiceInput({ onSubmit }: VoiceInputProps) {
       return;
     }
 
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US'; // Required for Safari
-
-    recognition.onstart = () => {
-      setIsListening(true);
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = event.results[0][0].transcript;
-      console.log('Heard:', transcript);
-      parseAndSubmit(transcript);
-    };
-
-    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-      console.error('Speech recognition error:', event.error);
-      setIsListening(false);
-    };
-
-    recognitionRef.current = recognition;
+    recognitionRef.current = SpeechRecognition;
   }, []);
 
   function parseAndSubmit(text: string) {
@@ -155,9 +131,47 @@ export default function VoiceInput({ onSubmit }: VoiceInputProps) {
     if (!recognitionRef.current) return;
 
     if (isListening) {
-      recognitionRef.current.stop();
-    } else {
-      recognitionRef.current.start();
+      // Can't stop speech recognition on iOS - just let it finish naturally
+      setIsListening(false);
+      return;
+    }
+
+    // Create a fresh recognition instance each time (required for iOS Safari)
+    const SpeechRecognition = recognitionRef.current as any;
+    const recognition = new SpeechRecognition();
+
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      console.log('Speech recognition started');
+      setIsListening(true);
+    };
+
+    recognition.onend = () => {
+      console.log('Speech recognition ended');
+      setIsListening(false);
+    };
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      const transcript = event.results[0][0].transcript;
+      console.log('Heard:', transcript);
+      parseAndSubmit(transcript);
+    };
+
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      console.error('Speech recognition error:', event.error, event.message);
+      setIsListening(false);
+      setMessage(`Error: ${event.error}`);
+      setIsError(true);
+      setTimeout(() => setMessage(''), 3000);
+    };
+
+    try {
+      recognition.start();
+    } catch (err) {
+      console.error('Failed to start recognition:', err);
     }
   }
 
