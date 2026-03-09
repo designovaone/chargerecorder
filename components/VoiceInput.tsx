@@ -61,6 +61,8 @@ interface VoiceInputProps {
 export default function VoiceInput({ onSubmit }: VoiceInputProps) {
   const [isListening, setIsListening] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
+  const [message, setMessage] = useState<string>('');
+  const [isError, setIsError] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
@@ -120,17 +122,32 @@ export default function VoiceInput({ onSubmit }: VoiceInputProps) {
 
   async function submitSession(percentage: number, type: 'start' | 'end') {
     try {
+      console.log('Submitting:', { percentage, type });
       const res = await fetch('/api/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ percentage, type }),
       });
 
+      const data = await res.json();
+      console.log('Response:', res.status, data);
+
       if (res.ok) {
+        setMessage(data.message || `Recorded ${percentage}%`);
+        setIsError(false);
         onSubmit();
+        // Clear message after 3 seconds
+        setTimeout(() => setMessage(''), 3000);
+      } else {
+        setMessage(data.detail || 'Failed to record');
+        setIsError(true);
+        setTimeout(() => setMessage(''), 3000);
       }
     } catch (err) {
       console.error('Submit failed:', err);
+      setMessage('Network error');
+      setIsError(true);
+      setTimeout(() => setMessage(''), 3000);
     }
   }
 
@@ -176,6 +193,11 @@ export default function VoiceInput({ onSubmit }: VoiceInputProps) {
       </button>
       {isListening && (
         <p className="text-center text-gray-600">Listening...</p>
+      )}
+      {message && (
+        <p className={`text-center text-sm ${isError ? 'text-red-600' : 'text-green-600'}`}>
+          {message}
+        </p>
       )}
     </div>
   );
